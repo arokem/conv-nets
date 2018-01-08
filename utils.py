@@ -42,7 +42,9 @@ def generate_dataset(func, n_train, n_test, num_labels, **kwargs):
 
 def draw_neural_net(layer_sizes,
                     left=.1, right=.9, bottom=.1, top=.9,
-                    ax=None):
+                    ax=None,
+                    draw_weights=True,
+                    draw_funcs=True):
     """Draw a neural network cartoon using matplotilb.
 
     Based on: https://gist.github.com/craffel/2d727968c3aaebd10359
@@ -76,20 +78,34 @@ def draw_neural_net(layer_sizes,
                                 v_spacing / 4.,
                                 color='w', ec='k', zorder=4)
             ax.add_artist(circle)
+            if draw_funcs and n > 0:
+                txt = "$f(X_{%s%s})$" % (n + 1, m + 1)
+            else:
+                txt = "$X_{%s%s}$" % (n + 1, m + 1)
             t = ax.text(circle.center[0] - 0.02, circle.center[1],
-                        "$X_{%s%s}$"%(n+1, m+1))
+                        txt)
             t.set_zorder(10)
     # Edges
     for n, (layer_size_a, layer_size_b) in enumerate(zip(layer_sizes[:-1],
                                                      layer_sizes[1:])):
         layer_top_a = v_spacing*(layer_size_a - 1) / 2. + (top + bottom) / 2.
         layer_top_b = v_spacing*(layer_size_b - 1) / 2. + (top + bottom) / 2.
-        for m in range(layer_size_a):
-            for o in range(layer_size_b):
-                line = plt.Line2D([n*h_spacing + left, (n + 1) * h_spacing +
-                                   left],
-                                  [layer_top_a - m*v_spacing, layer_top_b -
-                                   o*v_spacing], c='k')
+        for m in range(1, layer_size_a + 1):
+            for o in range(1, layer_size_b + 1):
+                l_x_pos1 = n*h_spacing + left
+                l_x_pos2 = (n + 1) * h_spacing + left
+                l_y_pos1 = layer_top_a - (m - 1) * v_spacing
+                l_y_pos2 = layer_top_b - (o - 1) * v_spacing
+                line = plt.Line2D([l_x_pos1, l_x_pos2],
+                                  [l_y_pos1, l_y_pos2], c='k')
                 ax.add_artist(line)
+                if draw_weights:
+                    w_x_pos = l_x_pos2 - (v_spacing / 4.) * 1.5
+                    w_slope = (l_y_pos2 - l_y_pos1) / (l_x_pos2 - l_x_pos1)
+                    w_y_pos = l_y_pos1 + (l_x_pos2 - l_x_pos1) * w_slope * 0.3
+                    t = ax.text(w_x_pos,
+                                w_y_pos,
+                                '$w^{%s}_{%s%s}$' % (n + 2, m, o))
+                    t.set_zorder(10)
 
     return ax
