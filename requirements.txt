@@ -1,4 +1,5 @@
 numpy
 matplotlib
+tensorflow
 keras
 sklearn
