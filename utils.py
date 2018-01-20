@@ -30,13 +30,14 @@ def generate_dataset(func, n_train, n_test, num_labels, **kwargs):
         These have dimensions {n_train, n_test} by num_labels
     """
     fvecs, labels = func(n_train + n_test, **kwargs)
-    # We need the one-hot encoder!
-    labels_onehot = (np.arange(num_labels) == labels[:, None])
+
     train_data, test_data, train_labels, test_labels = \
         train_test_split(fvecs.astype(np.float32),
-                         labels_onehot.astype(np.float32),
+                         labels,
                          train_size=n_train,
                          test_size=n_test)
+    
+    
     return train_data, test_data, train_labels, test_labels
 
 
@@ -44,7 +45,7 @@ def draw_neural_net(layer_sizes,
                     left=.1, right=.9, bottom=.1, top=.9,
                     ax=None,
                     draw_weights=True,
-                    draw_funcs=True):
+                    draw_funcs=False):
     """Draw a neural network cartoon using matplotilb.
 
     Based on: https://gist.github.com/craffel/2d727968c3aaebd10359
