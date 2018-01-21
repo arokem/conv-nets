@@ -3,3 +3,4 @@ matplotlib
 tensorflow
 keras
 sklearn
+seaborn

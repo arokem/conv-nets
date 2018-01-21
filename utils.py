@@ -6,6 +6,22 @@ Utility functions for conv-nets tutorial
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import scipy.io as sio
+import seaborn as sns
+
+def load_fashion():
+    _mat = sio.loadmat('./fashion.mat')
+    x_train = _mat['x_train']
+    x_test = _mat['x_test']
+    x_valid = _mat['x_valid']
+    y_train = _mat['y_train']
+    y_test = _mat['y_test']
+    y_valid = _mat['y_valid']
+    
+    x_train = np.concatenate([x_train, x_valid])
+    y_train = np.concatenate([y_train, y_valid])
+
+    return x_train, x_test, y_train, y_test
 
 
 def generate_dataset(func, n_train, n_test, num_labels, **kwargs):
@@ -30,14 +46,14 @@ def generate_dataset(func, n_train, n_test, num_labels, **kwargs):
         These have dimensions {n_train, n_test} by num_labels
     """
     fvecs, labels = func(n_train + n_test, **kwargs)
+    # We need the one-hot encoder!
+    labels_onehot = (np.arange(num_labels) == labels[:, None])
 
     train_data, test_data, train_labels, test_labels = \
         train_test_split(fvecs.astype(np.float32),
-                         labels,
+                         labels_onehot.astype(np.float32),
                          train_size=n_train,
                          test_size=n_test)
-    
-    
     return train_data, test_data, train_labels, test_labels
 
 
@@ -110,3 +126,10 @@ def draw_neural_net(layer_sizes,
                     t.set_zorder(10)
 
     return ax
+
+def plot_with_annot(im, vmax=40):
+    fig, ax = plt.subplots(1)
+    sns.heatmap(im, annot=True, ax=ax, cbar=False, cmap='gray_r', vmax=vmax)
+    plt.axis("off")
+    ax.set_aspect("equal")
+    return fig
