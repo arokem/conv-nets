@@ -119,7 +119,7 @@ def draw_neural_net(layer_sizes,
                 if draw_weights:
                     w_x_pos = l_x_pos2 - (v_spacing / 4.) * 1.5
                     w_slope = (l_y_pos2 - l_y_pos1) / (l_x_pos2 - l_x_pos1)
-                    w_y_pos = l_y_pos1 + (l_x_pos2 - l_x_pos1) * w_slope * 0.3
+                    w_y_pos = l_y_pos1 + (w_x_pos - l_x_pos1) * w_slope
                     t = ax.text(w_x_pos,
                                 w_y_pos,
                                 '$w^{%s}_{%s%s}$' % (n + 2, m, o))
