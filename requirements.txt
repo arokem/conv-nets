@@ -5,3 +5,4 @@ tensorflow
 keras
 sklearn
 seaborn
+requests

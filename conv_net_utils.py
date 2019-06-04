@@ -8,9 +8,18 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import scipy.io as sio
 import seaborn as sns
+import requests
 
 def load_fashion():
-    _mat = sio.loadmat('./fashion.mat')
+    try:
+        _mat = sio.loadmat('./fashion.mat')
+    except:
+        cc = requests.get('https://github.com/arokem/conv-nets/blob/master/fashion.mat?raw=true').content
+        f = open('fashion.mat', 'wb')
+        f.write(cc)
+        f.close()
+        _mat = sio.loadmat('fashion.mat')
+
     x_train = _mat['x_train']
     x_test = _mat['x_test']
     x_valid = _mat['x_valid']
